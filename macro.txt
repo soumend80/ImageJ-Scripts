@@ -1,0 +1,42 @@
+// This macro processes all the images in a folder and any subfolders.
+
+  extension = ".png";
+  dir1 = getDirectory("E:\Akash\Input_images ");
+  dir2 = getDirectory("E:\Akash\Output_images ");
+  setBatchMode(true);
+  n = 0;
+  processFolder(dir1);
+
+  function processFolder(dir1) {
+     list = getFileList(dir1);
+     for (i=0; i<list.length; i++) {
+          if (endsWith(list[i], "/"))
+              processFolder(dir1+list[i]);
+          else if (endsWith(list[i], extension))
+             processImage(dir1, list[i]);
+      }
+  }
+
+  function processImage(dir1, name) {
+     open(dir1+name); 
+     print(n++, name);
+makeRectangle(249, 372, 1569, 1152);
+//makeRectangle(249, 387, 1554, 1134);
+run("Crop");
+id1 = getTitle();
+run("Split Channels");
+selectWindow(id1 + " (green)"); 
+
+
+
+     // add code here to analyze or process the image
+run("Subtract Background...", "rolling=40 light");
+run("Make Binary");
+run("Invert");
+setForegroundColor(255, 255, 255);
+run("Fill Holes");
+run("Invert");
+run("Watershed");
+     saveAs(extension, dir2+name);
+     close();
+  }
